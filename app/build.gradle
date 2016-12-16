@@ -11,8 +11,9 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.durrutia.twinpic"
-        minSdkVersion 23
+        minSdkVersion 22 //Antes la 23.
         targetSdkVersion 25
+        multiDexEnabled true
         versionCode 12
         versionName "alpha-12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -106,5 +107,11 @@ dependencies {
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
     compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
     compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+
+    // https://mvnrepository.com/artifact/com.squareup.picasso/picasso
+    compile group: 'com.squareup.picasso', name: 'picasso', version: '2.5.2'
+
+    compile 'com.google.android.gms:play-services:9.2.0'
+    compile 'com.google.android.gms:play-services-location:9.2.0'
 
 }

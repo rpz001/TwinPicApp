@@ -24,7 +24,7 @@ public class TestModelDesktop extends BaseTest {
      * Timming
      */
     @Rule
-    public Timeout globalTimeout = Timeout.seconds(10);
+    public Timeout globalTimeout = Timeout.seconds(120);
 
     /**
      * Testing

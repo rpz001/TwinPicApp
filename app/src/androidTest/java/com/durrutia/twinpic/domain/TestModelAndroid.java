@@ -25,7 +25,7 @@ public class TestModelAndroid {
      * Timming
      */
     @Rule
-    public Timeout globalTimeout = Timeout.seconds(10);
+    public Timeout globalTimeout = Timeout.seconds(120);
 
 
     /**

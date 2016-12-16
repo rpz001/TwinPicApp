@@ -21,7 +21,7 @@ allprojects {
     }
 
     // RAM disk
-    buildDir = "R://${rootProject.name}//${project.name}"
+    //buildDir = "R://${rootProject.name}//${project.name}"
 }
 
 task clean(type: Delete) {
