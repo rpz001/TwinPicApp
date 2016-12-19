@@ -8,6 +8,7 @@ import com.durrutia.twinpic.domain.Pic;
 import com.durrutia.twinpic.domain.Pic_Table;
 import com.durrutia.twinpic.domain.Twin;
 import com.durrutia.twinpic.util.DeviceUtils;
+import com.durrutia.twinpic.util.RetrofitArrayAPI;
 import com.google.common.base.Stopwatch;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -21,6 +22,11 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Test principal del backend.
@@ -39,18 +45,15 @@ public final class Test {
      */
     public static void testDatabase(final Context context) {
 
-        //Log.d("Aviso","Esto es una prueba");
-        //test1(context);
-        //test2(context);
-        //test3(context);
-        poblarBD(context);
+        Log.d("Aviso","Esto es una prueba");
+        test4(context);
 
     }
 
     public static void poblarBD(final Context context){
 
-        log.debug("Aviso");
-
+        log.debug("Aviso: Se resetea la base de datos.");
+        context.deleteDatabase(Database.NAME + ".db");
         FlowManager.init(new FlowConfig.Builder(context).openDatabasesOnInit(true).build());
         File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
         String[] fileNames = path.list();
@@ -74,11 +77,120 @@ public final class Test {
                 .warning(RandomUtils.nextInt(0, 2))
                 .build();
 
+        pic.save();
+
+    }
+
+    /**
+     * Este test prueba que solo se haga una valoración (like, dislike, waning);
+     * @param context
+     */
+    public static void test4(final Context context){
+
+        log.debug("Aviso: Se resetea la base de datos.");
+        context.deleteDatabase(Database.NAME + ".db");
+        FlowManager.init(new FlowConfig.Builder(context).openDatabasesOnInit(true).build());
+
+        for(int i=0; i<4; i++) {
+
+            final Pic pic = Pic.builder()
+                    .deviceId(DeviceUtils.getDeviceId(context))
+                    .latitude(RandomUtils.nextDouble())
+                    .longitude(RandomUtils.nextDouble())
+                    .date(new Date().getTime())
+                    .url("http://" + RandomStringUtils.randomAlphabetic(20))
+                    .positive(RandomUtils.nextInt(0, 100))
+                    .negative(RandomUtils.nextInt(0, 100))
+                    .warning(RandomUtils.nextInt(0, 2))
+                    .build();
+            pic.save();
+
+        }
+
+        for(int i=0; i<2; i++) {
+
+            final Pic p1 = SQLite.select().from(Pic.class).queryList().get(2*i); //Pic local.
+            final Pic p2 = SQLite.select().from(Pic.class).queryList().get((2*i)+1); //Pic remota.
+            final Twin twin = Twin.builder().local(p1).remote(p2).build();
+            twin.save();
+
+        }
+
+        List<Twin> twins = SQLite.select().from(Twin.class).queryList();
+
+        for(int i=0; i<2; i++){
+
+            Twin t = twins.get(i);
+            log.debug("Twin {} antes de calificar {}",i,t);
+
+            //Inicialmente, la Twin no tiene ninguna calificación, se la da un like.
+            if(!t.isDioLike() && !t.isDioDislike()) {
+
+                Pic remote = t.getRemote();
+                remote.setPositive(remote.getPositive() + 1);
+                remote.save();
+                t.setDioLike(true);
+                t.save();
+                log.debug("Twin {} después de darle like {}",i,t);
+
+            }
+
+            log.debug("Dandole otro like a la Twin {}",i);
+
+            //Se le da otro like, no debería concretarse.
+            if(t.isDioLike() && !t.isDioDislike()){
+
+                log.debug("No se le puede dar mas likes");
+
+            }
+
+            //Se le da un dislike, debería disminuir en -1 la cantidad de likes.
+            if(t.isDioLike() && !t.isDioDislike()){
+
+                Pic remote = t.getRemote();
+                remote.setPositive(remote.getPositive() - 1);
+                remote.setNegative(remote.getNegative() + 1);
+                remote.save();
+                t.setDioLike(false);
+                t.setDioDislike(true);
+                t.save();
+                log.debug("Twin {} después de darle dislke {}",i,t);
+
+            }
+
+            //Se le da otro dislike, no debería concretarse.
+            if(!t.isDioLike() && t.isDioDislike()){
+
+                log.debug("No se le puede dar mas dislikes");
+
+            }
+
+            //Se vuelve a dar un like
+            if(!t.isDioLike() && t.isDioDislike()) {
+
+                Pic remote = t.getRemote();
+                remote.setPositive(remote.getPositive() + 1);
+                remote.setNegative(remote.getNegative() - 1);
+                remote.save();
+                t.setDioLike(true);
+                t.setDioDislike(false);
+                t.save();
+                log.debug("Twin {} después de darle like {}",i,t);
+
+            }
+
+        }
+
     }
 
     public static void test3(final Context context){
 
-        context.deleteDatabase(Database.NAME + ".db");
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://190.161.123.37:8080")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RetrofitArrayAPI service = retrofit.create(RetrofitArrayAPI.class);
 
     }
 

@@ -48,4 +48,25 @@ public class Twin extends BaseModel {
     @ForeignKey(tableClass = Pic.class)
     Pic remote;
 
+    /**
+     * Marcador que indica que el usuario ya dio like a la foto remota.
+     */
+    @Getter
+    @Setter
+    boolean dioLike;
+
+    /**
+     * Marcador que indica que el usuario ya dio dislike a la foto remota.
+     */
+    @Getter
+    @Setter
+    boolean dioDislike;
+
+    /**
+     * Marcador que indica que el usuario ya dio warning a la foto remota.
+     */
+    @Getter
+    @Setter
+    boolean dioWarning;
+
 }
