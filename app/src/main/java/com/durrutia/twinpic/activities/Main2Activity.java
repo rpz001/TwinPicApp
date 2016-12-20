@@ -29,9 +29,7 @@ import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
 
-    Long picRemoteID;
-
-    String deviceIdLocal;
+    Twin twin;
 
     @BindView(R.id.toolbar2)
     Toolbar toolBar;
@@ -75,9 +73,6 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        deviceIdLocal = getIntent().getExtras().getString("deviceId");
-        picRemoteID = getIntent().getExtras().getLong("id");
-
         ButterKnife.bind(this);
 
         toolBar.setTitle(getIntent().getExtras().getString("titleBar"));
@@ -87,21 +82,64 @@ public class Main2Activity extends AppCompatActivity {
         Picasso.with(getBaseContext()).load(uri).resize(600,600).centerCrop().into(imageView);
         picDescription();
 
+        if(getIntent().getExtras().getString("type").equals("remote")){
+
+            setButtons();
+
+        }
+
+    }
+
+    private void setButtons(){
+
+        List<Twin> lt = SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(getIntent().getExtras().getLong("id"))).queryList();
+
+        for(int i=0; i<lt.size(); i++){
+
+            if(lt.get(i).getLocal().getDeviceId().equals(getIntent().getExtras().getString("deviceId"))){
+
+                twin = lt.get(i);
+
+            }
+        }
+
         buttonLikes.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v){
 
-                //SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(picRemoteID)).queryList();
-                SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(picRemoteID))
-                        .and(Pic_Table.deviceId.eq(deviceIdLocal))
-                        .and(Twin_Table.local_id.eq(Pic_Table.id));
+                if(!twin.isDioLike() && !twin.isDioDislike()){
 
-                Toast.makeText(Main2Activity.this,"+1 Like", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picRemoteID)).queryList().get(0);
-                Integer cantLikes = p.getPositive() + 1;
-                p.setPositive(cantLikes);
-                p.update();
-                textViewLikes.setText("Me gusta: " +cantLikes.toString());
+                    Toast.makeText(Main2Activity.this,"+1 Like", Toast.LENGTH_LONG).show();
+                    Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
+                    Integer cantLikes = p.getPositive() + 1;
+                    p.setPositive(cantLikes);
+                    twin.setDioLike(true);
+                    p.update();
+                    twin.update();
+                    textViewLikes.setText("Me gusta: " +cantLikes.toString());
+
+                }else{
+
+                    if(!twin.isDioLike() && twin.isDioDislike()){
+
+                        Toast.makeText(Main2Activity.this,"+1 Like", Toast.LENGTH_LONG).show();
+                        Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
+                        Integer cantLikes = p.getPositive() + 1;
+                        Integer cantDislikes = p.getNegative() -1;
+                        p.setPositive(cantLikes);
+                        p.setNegative(cantDislikes);
+                        p.update();
+                        twin.setDioLike(true);
+                        twin.setDioDislike(false);
+                        twin.update();
+                        textViewLikes.setText("Me gusta: " +cantLikes.toString());
+
+                    }else{
+
+                        Toast.makeText(Main2Activity.this,"No se puede volver a dar +1 like.", Toast.LENGTH_LONG).show();
+
+                    }
+                }
 
             }
 
@@ -111,12 +149,39 @@ public class Main2Activity extends AppCompatActivity {
 
             public void onClick(View v){
 
-                Toast.makeText(Main2Activity.this,"-1 Like", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picRemoteID)).queryList().get(0);
-                Integer cantDislikes = p.getNegative() + 1;
-                p.setNegative(cantDislikes);
-                p.update();
-                textViewDislikes.setText("No me gusta: " +cantDislikes.toString());
+                if(!twin.isDioLike() && !twin.isDioDislike()){
+
+                    Toast.makeText(Main2Activity.this,"+1 dislike", Toast.LENGTH_LONG).show();
+                    Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
+                    Integer cantDislikes = p.getNegative() + 1;
+                    p.setNegative(cantDislikes);
+                    p.update();
+                    twin.setDioDislike(true);
+                    twin.update();
+                    textViewDislikes.setText("No me gusta: " +cantDislikes.toString());
+
+                }else{
+
+                    if(twin.isDioLike() && !twin.isDioDislike()){
+
+                        Toast.makeText(Main2Activity.this,"+1 dislike", Toast.LENGTH_LONG).show();
+                        Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
+                        Integer cantDislikes = p.getPositive() - 1;
+                        Integer cantLikes = p.getNegative() + 1;
+                        p.setPositive(cantLikes);
+                        p.setNegative(cantDislikes);
+                        p.update();
+                        twin.setDioDislike(true);
+                        twin.setDioLike(false);
+                        twin.update();
+                        textViewDislikes.setText("No me gusta: " +cantDislikes.toString());
+
+                    }else{
+
+                        Toast.makeText(Main2Activity.this,"No se puede volver a dar +1 dislike.", Toast.LENGTH_LONG).show();
+
+                    }
+                }
 
             }
 
@@ -127,7 +192,7 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View v){
 
                 Toast.makeText(Main2Activity.this,"+1 Warning", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picRemoteID)).queryList().get(0);
+                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
                 Integer cantWarnings = p.getWarning() + 1;
                 p.setWarning(cantWarnings);
                 p.update();
@@ -149,6 +214,7 @@ public class Main2Activity extends AppCompatActivity {
 
     private void picDescription(){
 
+        Long picID = getIntent().getExtras().getLong("id");
         Long picDate = getIntent().getExtras().getLong("date");
         Double picLongitude = getIntent().getExtras().getDouble("longitude");
         Double picLatitude = getIntent().getExtras().getDouble("latitude");
@@ -156,7 +222,7 @@ public class Main2Activity extends AppCompatActivity {
         Integer picDislikes = getIntent().getExtras().getInt("dislikes");
         Integer picWarnings = getIntent().getExtras().getInt("warnings");
 
-        textViewID.setText("ID: " +picRemoteID);
+        textViewID.setText("ID: " +picID);
         textViewDate.setText("Fecha tomada: " +picDate);
         textViewLongitude.setText("Longitud: " +picLongitude);
         textViewLatitude.setText("Latitud: " +picLatitude);

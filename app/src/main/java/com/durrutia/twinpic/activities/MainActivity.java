@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         log.debug("{}",newPic);
         newPic.save();
-        //d
+
         List<Pic> remotePics = SQLite.select().from(Pic.class).where(Pic_Table.deviceId.notLike(DeviceUtils.getDeviceId(this.getBaseContext()))).queryList();
         List<Twin> twins = SQLite.select().from(Twin.class).queryList();
 
@@ -273,6 +273,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
             }
 
+            List<Pic> picsNoRepetidas = new ArrayList<Pic>();
+
             for(int i=0; i<remotePics.size(); i++){
 
                 boolean b = true;
@@ -292,20 +294,28 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
                 if(b){
 
-                    Pic remotePic = remotePics.get(i);
-                    Twin newTwin = Twin.builder().local(newPic).remote(remotePic).build();
-                    newTwin.save();
-                    loadImages();
-                    return;
+                    picsNoRepetidas.add(remotePics.get(i));
 
                 }
 
             }
 
-        }
+            if(picsNoRepetidas.isEmpty()){
 
-        Toast.makeText(MainActivity.this,"No se pudo subir la imagen, es probable que no existan imagenes remotas " +
-                "o ya se han asignado todas a su cuenta", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,"No se pudo subir la imagen, es probable que no existan imagenes remotas " +
+                        "o ya se han asignado todas a su cuenta", Toast.LENGTH_LONG).show();
+
+            }else{
+
+                Pic remotePic = picsNoRepetidas.get(RandomUtils.nextInt(0,picsNoRepetidas.size()-1));
+                Twin newTwin = Twin.builder().local(newPic).remote(remotePic).build();
+                newTwin.save();
+                loadImages();
+                return;
+
+            }
+
+        }
 
     }
 
@@ -318,7 +328,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void loadImages(){
 
-        List<Twin> twins = SQLite.select().from(Twin.class).queryList();
+        List<Twin> twinsAux = SQLite.select().from(Twin.class).queryList();
+        List<Twin> twins = new ArrayList<Twin>();
+
+        for(int i=0; i<twinsAux.size(); i++){
+
+            if(twinsAux.get(i).getLocal().getDeviceId().equals(DeviceUtils.getDeviceId(this.getBaseContext()))){
+
+                twins.add(twinsAux.get(i));
+
+            }
+
+        }
+
         Collections.reverse(twins);
 
         if(lv.getAdapter() == null){
