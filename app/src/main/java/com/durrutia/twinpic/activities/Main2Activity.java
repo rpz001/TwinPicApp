@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.durrutia.twinpic.R;
 import com.durrutia.twinpic.domain.Pic;
 import com.durrutia.twinpic.domain.Pic_Table;
+import com.durrutia.twinpic.domain.Twin;
+import com.durrutia.twinpic.domain.Twin_Table;
 import com.durrutia.twinpic.util.DeviceUtils;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.squareup.picasso.Picasso;
@@ -27,7 +29,9 @@ import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
 
-    Long picID;
+    Long picRemoteID;
+
+    String deviceIdLocal;
 
     @BindView(R.id.toolbar2)
     Toolbar toolBar;
@@ -71,6 +75,9 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+        deviceIdLocal = getIntent().getExtras().getString("deviceId");
+        picRemoteID = getIntent().getExtras().getLong("id");
+
         ButterKnife.bind(this);
 
         toolBar.setTitle(getIntent().getExtras().getString("titleBar"));
@@ -84,8 +91,13 @@ public class Main2Activity extends AppCompatActivity {
 
             public void onClick(View v){
 
+                //SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(picRemoteID)).queryList();
+                SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(picRemoteID))
+                        .and(Pic_Table.deviceId.eq(deviceIdLocal))
+                        .and(Twin_Table.local_id.eq(Pic_Table.id));
+
                 Toast.makeText(Main2Activity.this,"+1 Like", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picID)).queryList().get(0);
+                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picRemoteID)).queryList().get(0);
                 Integer cantLikes = p.getPositive() + 1;
                 p.setPositive(cantLikes);
                 p.update();
@@ -100,7 +112,7 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View v){
 
                 Toast.makeText(Main2Activity.this,"-1 Like", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picID)).queryList().get(0);
+                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picRemoteID)).queryList().get(0);
                 Integer cantDislikes = p.getNegative() + 1;
                 p.setNegative(cantDislikes);
                 p.update();
@@ -115,7 +127,7 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View v){
 
                 Toast.makeText(Main2Activity.this,"+1 Warning", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picID)).queryList().get(0);
+                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(picRemoteID)).queryList().get(0);
                 Integer cantWarnings = p.getWarning() + 1;
                 p.setWarning(cantWarnings);
                 p.update();
@@ -137,7 +149,6 @@ public class Main2Activity extends AppCompatActivity {
 
     private void picDescription(){
 
-        picID = getIntent().getExtras().getLong("id");
         Long picDate = getIntent().getExtras().getLong("date");
         Double picLongitude = getIntent().getExtras().getDouble("longitude");
         Double picLatitude = getIntent().getExtras().getDouble("latitude");
@@ -145,7 +156,7 @@ public class Main2Activity extends AppCompatActivity {
         Integer picDislikes = getIntent().getExtras().getInt("dislikes");
         Integer picWarnings = getIntent().getExtras().getInt("warnings");
 
-        textViewID.setText("ID: " +picID);
+        textViewID.setText("ID: " +picRemoteID);
         textViewDate.setText("Fecha tomada: " +picDate);
         textViewLongitude.setText("Longitud: " +picLongitude);
         textViewLatitude.setText("Latitud: " +picLatitude);

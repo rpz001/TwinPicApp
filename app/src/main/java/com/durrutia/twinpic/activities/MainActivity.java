@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         if(lv.getAdapter() == null){
 
-            lv.setAdapter(new CustomAdapter(this,twins.toArray(new Twin[0])));
+            lv.setAdapter(new CustomAdapter(this,twins.toArray(new Twin[0]),DeviceUtils.getDeviceId(this.getBaseContext())));
 
         }else{
 

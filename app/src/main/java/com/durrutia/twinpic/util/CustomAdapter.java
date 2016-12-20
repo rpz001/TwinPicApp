@@ -28,14 +28,16 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private static LayoutInflater inflater = null;
     private Twin[] twins;
+    private String devIdLocal = null;
 
-    public CustomAdapter(MainActivity mainActivity, Twin[] t) {
+    public CustomAdapter(MainActivity mainActivity, Twin[] t, String id) {
 
         // TODO Auto-generated constructor stub
 
         context = mainActivity;
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.twins = t;
+        this.devIdLocal = id;
 
     }
 
@@ -122,6 +124,7 @@ public class CustomAdapter extends BaseAdapter {
                 intent.putExtra("dislikes",twins[position].getRemote().getNegative());
                 intent.putExtra("warnings",twins[position].getRemote().getWarning());
                 intent.putExtra("type","remote");
+                intent.putExtra("deviceId",devIdLocal);
                 context.startActivity(intent);
 
             }

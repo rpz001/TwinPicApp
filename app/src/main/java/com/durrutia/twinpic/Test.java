@@ -7,12 +7,15 @@ import android.util.Log;
 import com.durrutia.twinpic.domain.Pic;
 import com.durrutia.twinpic.domain.Pic_Table;
 import com.durrutia.twinpic.domain.Twin;
+import com.durrutia.twinpic.domain.Twin_Table;
 import com.durrutia.twinpic.util.DeviceUtils;
 import com.durrutia.twinpic.util.RetrofitArrayAPI;
 import com.google.common.base.Stopwatch;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Condition;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -46,7 +49,8 @@ public final class Test {
     public static void testDatabase(final Context context) {
 
         Log.d("Aviso","Esto es una prueba");
-        test4(context);
+        test5(context);
+        //test4(context);
 
     }
 
@@ -82,6 +86,77 @@ public final class Test {
     }
 
     /**
+     * Se crean unas Twins y se selecciona una para cierto Pic Remoto y DeviceId.
+     * @param context
+     */
+    public static void test5(final Context context){
+
+        log.debug("Aviso: Se resetea la base de datos.");
+        context.deleteDatabase(Database.NAME + ".db");
+        FlowManager.init(new FlowConfig.Builder(context).openDatabasesOnInit(true).build());
+
+        //Se crean 20 pics.
+        for(int i=0; i<20; i++) {
+
+            final Pic pic = Pic.builder()
+                    .deviceId(RandomStringUtils.randomAlphabetic(5))
+                    .latitude(RandomUtils.nextDouble())
+                    .longitude(RandomUtils.nextDouble())
+                    .date(new Date().getTime())
+                    .url("http://" + RandomStringUtils.randomAlphabetic(20))
+                    .positive(RandomUtils.nextInt(0, 100))
+                    .negative(RandomUtils.nextInt(0, 100))
+                    .warning(RandomUtils.nextInt(0, 2))
+                    .build();
+            pic.save();
+
+        }
+
+        //Se crean 10 twins.
+        for(int i=0; i<10; i++) {
+
+            final Pic p1 = SQLite.select().from(Pic.class).queryList().get(2*i); //Pic local.
+            final Pic p2 = SQLite.select().from(Pic.class).queryList().get((2*i)+1); //Pic remota.
+            final Twin twin = Twin.builder().local(p1).remote(p2).build();
+            twin.save();
+
+        }
+
+        List<Twin> listaTwins = SQLite.select().from(Twin.class).queryList();
+
+        //Se despliegan las twins.
+        for(int i=0; i<listaTwins.size(); i++){
+
+            Twin t = listaTwins.get(i);
+            log.debug("Twin {}: {}" ,i,t);
+
+        }
+
+        //Selecciono un deviceId local de una Twin del medio de la lista.
+        String devID = listaTwins.get((listaTwins.size()/2)).getLocal().getDeviceId();
+
+        //Selecciono un Pic (su id) remoto de una Twin del medio de la lista.
+        Long idRemote = listaTwins.get((listaTwins.size()/2)).getRemote().getId();
+
+        //Probando que se obtenga la Twin para un dispositivo y Pic remoto dado en vez de buscar en la lista.
+        List<Twin> lt = SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(idRemote)).queryList();
+
+        Twin t = null;
+
+        for(int i=0; i<lt.size(); i++){
+
+            if(lt.get(i).getLocal().getDeviceId().equals(devID)){
+
+                t = lt.get(i);
+
+            }
+        }
+
+        log.debug("{}",t);
+
+    }
+
+    /**
      * Este test prueba que solo se haga una valoración (like, dislike, waning);
      * @param context
      */
@@ -91,7 +166,7 @@ public final class Test {
         context.deleteDatabase(Database.NAME + ".db");
         FlowManager.init(new FlowConfig.Builder(context).openDatabasesOnInit(true).build());
 
-        for(int i=0; i<4; i++) {
+        for(int i=0; i<20; i++) {
 
             final Pic pic = Pic.builder()
                     .deviceId(DeviceUtils.getDeviceId(context))
