@@ -146,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             Log.d("Dato",ruta + "/" + fileNames[i]);
             final Pic pic = Pic.builder()
                     .deviceId(DeviceUtils.getDeviceId(context)+ RandomStringUtils.randomAlphabetic(20))
-                    .latitude(RandomUtils.nextDouble())
-                    .longitude(RandomUtils.nextDouble())
-                    .date(new Date().getTime())
+                    .latitude(RandomUtils.nextDouble(0,90))
+                    .longitude(RandomUtils.nextDouble(0,90))
+                    .date(new Date())
                     .url(ruta+"/"+fileNames[i])
                     .positive(RandomUtils.nextInt(0, 100))
                     .negative(RandomUtils.nextInt(0, 100))
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     .deviceId(DeviceUtils.getDeviceId(this.getBaseContext()))
                     .latitude(latitude)
                     .longitude(longitude)
-                    .date(new Date().getTime())
+                    .date(new Date())
                     .url(myDir + "/" +fname)
                     .positive(0)
                     .negative(0)
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         if(lv.getAdapter() == null){
 
-            lv.setAdapter(new CustomAdapter(this,twins.toArray(new Twin[0]),DeviceUtils.getDeviceId(this.getBaseContext())));
+            lv.setAdapter(new CustomAdapter(this,twins.toArray(new Twin[0])));
 
         }else{
 

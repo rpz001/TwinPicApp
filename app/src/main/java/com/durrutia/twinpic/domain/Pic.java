@@ -5,6 +5,8 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,7 +54,7 @@ public class Pic extends BaseModel {
     @Setter
     @Getter
     @Column
-    Long date;
+    Date date;
 
     /**
      * URL de la foto

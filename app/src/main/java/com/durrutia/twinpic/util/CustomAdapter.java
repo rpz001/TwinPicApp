@@ -19,6 +19,8 @@ import com.durrutia.twinpic.domain.Twin;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,16 +30,16 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private static LayoutInflater inflater = null;
     private Twin[] twins;
-    private String devIdLocal = null;
+    private MainActivity _mainActivity;
 
-    public CustomAdapter(MainActivity mainActivity, Twin[] t, String id) {
+    public CustomAdapter(MainActivity mainActivity, Twin[] t) {
 
         // TODO Auto-generated constructor stub
 
         context = mainActivity;
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.twins = t;
-        this.devIdLocal = id;
+        this._mainActivity = mainActivity;
 
     }
 
@@ -87,11 +89,13 @@ public class CustomAdapter extends BaseAdapter {
 
             public void onClick(View v){
 
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
                 Intent intent = new Intent(context.getApplicationContext(),Main2Activity.class);
                 intent.putExtra("titleBar","Local");
                 intent.putExtra("url",twins[position].getLocal().getUrl());
                 intent.putExtra("id",twins[position].getLocal().getId());
-                intent.putExtra("date",twins[position].getLocal().getDate());
+                intent.putExtra("date",dateFormat.format(twins[position].getLocal().getDate()));
                 intent.putExtra("longitude",twins[position].getLocal().getLongitude());
                 intent.putExtra("latitude",twins[position].getLocal().getLatitude());
                 intent.putExtra("likes",twins[position].getLocal().getPositive());
@@ -113,18 +117,20 @@ public class CustomAdapter extends BaseAdapter {
 
             public void onClick(View v){
 
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
                 Intent intent = new Intent(context.getApplicationContext(),Main2Activity.class);
                 intent.putExtra("titleBar","Remoto");
                 intent.putExtra("url",twins[position].getRemote().getUrl());
                 intent.putExtra("id",twins[position].getRemote().getId());
-                intent.putExtra("date",twins[position].getRemote().getDate());
+                intent.putExtra("date",dateFormat.format(twins[position].getRemote().getDate()));
                 intent.putExtra("longitude",twins[position].getRemote().getLongitude());
                 intent.putExtra("latitude",twins[position].getRemote().getLatitude());
                 intent.putExtra("likes",twins[position].getRemote().getPositive());
                 intent.putExtra("dislikes",twins[position].getRemote().getNegative());
                 intent.putExtra("warnings",twins[position].getRemote().getWarning());
                 intent.putExtra("type","remote");
-                intent.putExtra("deviceId",devIdLocal);
+                intent.putExtra("deviceId",DeviceUtils.getDeviceId(_mainActivity.getBaseContext()));
                 context.startActivity(intent);
 
             }

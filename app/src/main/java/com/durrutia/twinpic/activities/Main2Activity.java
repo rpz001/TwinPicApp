@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.durrutia.twinpic.R;
 import com.durrutia.twinpic.domain.Pic;
+import com.durrutia.twinpic.domain.PicReportada;
 import com.durrutia.twinpic.domain.Pic_Table;
 import com.durrutia.twinpic.domain.Twin;
 import com.durrutia.twinpic.domain.Twin_Table;
@@ -23,9 +25,13 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Main2Activity extends AppCompatActivity {
 
@@ -89,7 +95,6 @@ public class Main2Activity extends AppCompatActivity {
         }
 
     }
-
     private void setButtons(){
 
         List<Twin> lt = SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(getIntent().getExtras().getLong("id"))).queryList();
@@ -103,6 +108,8 @@ public class Main2Activity extends AppCompatActivity {
             }
         }
 
+        Log.d("Twin",twin.toString());
+
         buttonLikes.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v){
@@ -114,6 +121,7 @@ public class Main2Activity extends AppCompatActivity {
                     Integer cantLikes = p.getPositive() + 1;
                     p.setPositive(cantLikes);
                     twin.setDioLike(true);
+                    twin.setDioDislike(false);
                     p.update();
                     twin.update();
                     textViewLikes.setText("Me gusta: " +cantLikes.toString());
@@ -133,6 +141,7 @@ public class Main2Activity extends AppCompatActivity {
                         twin.setDioDislike(false);
                         twin.update();
                         textViewLikes.setText("Me gusta: " +cantLikes.toString());
+                        textViewDislikes.setText("No me gusta: " +cantDislikes.toString());
 
                     }else{
 
@@ -157,6 +166,7 @@ public class Main2Activity extends AppCompatActivity {
                     p.setNegative(cantDislikes);
                     p.update();
                     twin.setDioDislike(true);
+                    twin.setDioLike(false);
                     twin.update();
                     textViewDislikes.setText("No me gusta: " +cantDislikes.toString());
 
@@ -166,14 +176,15 @@ public class Main2Activity extends AppCompatActivity {
 
                         Toast.makeText(Main2Activity.this,"+1 dislike", Toast.LENGTH_LONG).show();
                         Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
-                        Integer cantDislikes = p.getPositive() - 1;
-                        Integer cantLikes = p.getNegative() + 1;
+                        Integer cantDislikes = p.getNegative() + 1;
+                        Integer cantLikes = p.getPositive() - 1;
                         p.setPositive(cantLikes);
                         p.setNegative(cantDislikes);
                         p.update();
                         twin.setDioDislike(true);
                         twin.setDioLike(false);
                         twin.update();
+                        textViewLikes.setText("Me gusta: " +cantLikes.toString());
                         textViewDislikes.setText("No me gusta: " +cantDislikes.toString());
 
                     }else{
@@ -191,12 +202,34 @@ public class Main2Activity extends AppCompatActivity {
 
             public void onClick(View v){
 
-                Toast.makeText(Main2Activity.this,"+1 Warning", Toast.LENGTH_LONG).show();
-                Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
-                Integer cantWarnings = p.getWarning() + 1;
-                p.setWarning(cantWarnings);
-                p.update();
-                textViewWarnings.setText("Advertencias: " +cantWarnings.toString());
+                if(twin.isDioWarning()){
+
+                    Toast.makeText(Main2Activity.this,"Ya dió +1 warning",Toast.LENGTH_LONG).show();
+
+                }else{
+
+                    Pic p = SQLite.select().from(Pic.class).where(Pic_Table.id.eq(twin.getRemote().getId())).queryList().get(0);
+                    Integer cantWarnings = p.getWarning() + 1;
+                    p.setWarning(cantWarnings);
+                    p.update();
+                    twin.setDioWarning(true);
+                    textViewWarnings.setText("Advertencias: " +cantWarnings.toString());
+
+                    if(p.getWarning() > 2){
+
+                        PicReportada pr = PicReportada.builder().picReportada(p).build();
+                        pr.save();
+                        Toast.makeText(Main2Activity.this,"+1 Warning y enviada a la lista negra", Toast.LENGTH_LONG).show();
+
+                    }else{
+
+                        Toast.makeText(Main2Activity.this,"+1 Warning", Toast.LENGTH_LONG).show();
+
+                    }
+
+                }
+
+
 
             }
 
@@ -215,7 +248,7 @@ public class Main2Activity extends AppCompatActivity {
     private void picDescription(){
 
         Long picID = getIntent().getExtras().getLong("id");
-        Long picDate = getIntent().getExtras().getLong("date");
+        String picDate = getIntent().getExtras().getString("date");
         Double picLongitude = getIntent().getExtras().getDouble("longitude");
         Double picLatitude = getIntent().getExtras().getDouble("latitude");
         Integer picLikes = getIntent().getExtras().getInt("likes");
@@ -224,8 +257,8 @@ public class Main2Activity extends AppCompatActivity {
 
         textViewID.setText("ID: " +picID);
         textViewDate.setText("Fecha tomada: " +picDate);
-        textViewLongitude.setText("Longitud: " +picLongitude);
-        textViewLatitude.setText("Latitud: " +picLatitude);
+        textViewLongitude.setText("Longitud: " +picLongitude.toString().substring(0,6));
+        textViewLatitude.setText("Latitud: " +picLatitude.toString().substring(0,6));
         textViewLikes.setText("Me gusta: " +picLikes);
         textViewDislikes.setText("No me gusta: " +picDislikes);
         textViewWarnings.setText("Advertencias: " +picWarnings);

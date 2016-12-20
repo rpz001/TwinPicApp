@@ -21,6 +21,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -49,8 +51,7 @@ public final class Test {
     public static void testDatabase(final Context context) {
 
         Log.d("Aviso","Esto es una prueba");
-        test5(context);
-        //test4(context);
+        test6(context);
 
     }
 
@@ -74,7 +75,7 @@ public final class Test {
                 .deviceId(DeviceUtils.getDeviceId(context)+RandomStringUtils.randomAlphabetic(20))
                 .latitude(RandomUtils.nextDouble())
                 .longitude(RandomUtils.nextDouble())
-                .date(new Date().getTime())
+                .date(new Date())
                 .url("http://" + RandomStringUtils.randomAlphabetic(20))
                 .positive(RandomUtils.nextInt(0, 100))
                 .negative(RandomUtils.nextInt(0, 100))
@@ -82,6 +83,19 @@ public final class Test {
                 .build();
 
         pic.save();
+
+    }
+
+    /**
+     * Test que prueba formato de fecha
+     * @param context
+     */
+    public static void test6(final Context context){
+
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        String fecha = dateFormat.format(date);
+        log.debug("La fecha es: {}",fecha);
 
     }
 
@@ -102,7 +116,7 @@ public final class Test {
                     .deviceId(RandomStringUtils.randomAlphabetic(5))
                     .latitude(RandomUtils.nextDouble())
                     .longitude(RandomUtils.nextDouble())
-                    .date(new Date().getTime())
+                    .date(new Date())
                     .url("http://" + RandomStringUtils.randomAlphabetic(20))
                     .positive(RandomUtils.nextInt(0, 100))
                     .negative(RandomUtils.nextInt(0, 100))
@@ -172,7 +186,7 @@ public final class Test {
                     .deviceId(DeviceUtils.getDeviceId(context))
                     .latitude(RandomUtils.nextDouble())
                     .longitude(RandomUtils.nextDouble())
-                    .date(new Date().getTime())
+                    .date(new Date())
                     .url("http://" + RandomStringUtils.randomAlphabetic(20))
                     .positive(RandomUtils.nextInt(0, 100))
                     .negative(RandomUtils.nextInt(0, 100))
@@ -220,7 +234,7 @@ public final class Test {
             }
 
             //Se le da un dislike, debería disminuir en -1 la cantidad de likes.
-            if(t.isDioLike() && !t.isDioDislike()){
+            if(!t.isDioLike() && t.isDioDislike()){
 
                 Pic remote = t.getRemote();
                 remote.setPositive(remote.getPositive() - 1);
@@ -312,7 +326,7 @@ public final class Test {
                         .deviceId(DeviceUtils.getDeviceId(context))
                         .latitude(RandomUtils.nextDouble())
                         .longitude(RandomUtils.nextDouble())
-                        .date(new Date().getTime())
+                        .date(new Date())
                         .url("http://" + RandomStringUtils.randomAlphabetic(20))
                         .positive(RandomUtils.nextInt(0, 100))
                         .negative(RandomUtils.nextInt(0, 100))

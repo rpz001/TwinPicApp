@@ -1,6 +1,7 @@
 package com.durrutia.twinpic.domain;
 
 import com.durrutia.twinpic.Database;
+import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -53,6 +54,7 @@ public class Twin extends BaseModel {
      */
     @Getter
     @Setter
+    @Column
     boolean dioLike;
 
     /**
@@ -60,6 +62,7 @@ public class Twin extends BaseModel {
      */
     @Getter
     @Setter
+    @Column
     boolean dioDislike;
 
     /**
@@ -67,6 +70,7 @@ public class Twin extends BaseModel {
      */
     @Getter
     @Setter
+    @Column
     boolean dioWarning;
 
 }
