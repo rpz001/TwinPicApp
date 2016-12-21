@@ -29,7 +29,7 @@ public class DeviceUtils {
         @SuppressLint("HardwareIds")
         final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        if ("9774d56d682e549c".equals(androidId)) {
+        if ("9774d56d682e549c" .equals(androidId)) {
             log.warn("AndroidId Broken!");
         }
 

@@ -48,7 +48,7 @@
         android:theme="@style/AppTheme"
         tools:replace="allowBackup, icon">
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.MenuPrincipal"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
@@ -57,7 +57,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.Main2Activity"></activity>
+        <activity android:name=".activities.DetallePic"></activity>
     </application>
 
 </manifest>

@@ -14,7 +14,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Twin: Relaciona dos pics (Uno local con remoto)
+ * Twin: Relacion entre dos pics (Uno local con remoto).
+ *
  * @author Rodrigo Alejandro Pizarro Zapata.
  */
 @Slf4j

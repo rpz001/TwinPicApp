@@ -10,7 +10,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     android:background="@android:color/white"
-    tools:context="com.durrutia.twinpic.activities.MainActivity">
+    tools:context="com.durrutia.twinpic.activities.MenuPrincipal">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

@@ -11,6 +11,11 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
+/**
+ * Interface que representa los servicios del servidor.
+ *
+ * @author Rodrigo Alejandro Pizarro Zapata.
+ */
 public interface ServerService {
 
     //Método que permite obtener un Pic según su id.

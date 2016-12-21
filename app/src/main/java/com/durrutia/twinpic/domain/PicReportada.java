@@ -13,7 +13,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * PicReportada: Contiene una Pic que tiene más de 3 advertencias.
+ * PicReportada: Representa a una foto reportada como inadecuada.
+ *
  * @author Rodrigo Alejandro Pizarro Zapata.
  */
 @Slf4j
@@ -29,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PicReportada extends BaseModel {
 
     /**
-     * Identificador único.
+     * Identificador unico.
      */
     @Getter
     @Setter

@@ -9,7 +9,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    tools:context="com.durrutia.twinpic.activities.Main2Activity">
+    tools:context="com.durrutia.twinpic.activities.DetallePic">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"

@@ -19,6 +19,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Test principal del backend.
  *
- * @author Diego P. Urrutia Astorga
+ * @author Rodrigo Alejandro Pizarro Zapata.
  * @version 20161102
  */
 
@@ -49,10 +50,20 @@ public final class Test {
     public static void testDatabase(final Context context) {
 
         Log.d("Aviso","Esto es una prueba");
+        //test1(context);
+        //test2(context);
         test3(context);
+        //test4(context);
+        //test5(context);
+        //test6(context);
+        //test7(context);
 
     }
 
+    /**
+     * Metodo que permite poblar la BD con Pics.
+     * @param context
+     */
     public static void poblarBD(final Context context){
 
         log.debug("Aviso: Se resetea la base de datos.");
@@ -276,8 +287,10 @@ public final class Test {
      */
     public static void test3(final Context context){
 
+        log.debug("Esta es la prueba 3");
+        //http://190.161.123.37:8080
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://190.161.123.37:8080")
+                .baseUrl("http://192.168.56.1:8080")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -320,6 +333,10 @@ public final class Test {
 
     }
 
+    /**
+     * Test que despliega todas las Pics almacenadas en la BD.
+     * @param context
+     */
     public static void test2(final Context context){
 
         FlowManager.init(new FlowConfig.Builder(context).openDatabasesOnInit(true).build());
