@@ -9,13 +9,11 @@ import com.durrutia.twinpic.domain.Pic_Table;
 import com.durrutia.twinpic.domain.Twin;
 import com.durrutia.twinpic.domain.Twin_Table;
 import com.durrutia.twinpic.util.DeviceUtils;
-import com.durrutia.twinpic.util.RetrofitArrayAPI;
+import com.durrutia.twinpic.util.ServerService;
 import com.google.common.base.Stopwatch;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.Condition;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -51,7 +49,7 @@ public final class Test {
     public static void testDatabase(final Context context) {
 
         Log.d("Aviso","Esto es una prueba");
-        test6(context);
+        test3(context);
 
     }
 
@@ -272,6 +270,10 @@ public final class Test {
 
     }
 
+    /**
+     * Método que prueba la conexión con el servidor, desplegando todas las pics.
+     * @param context
+     */
     public static void test3(final Context context){
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -279,7 +281,42 @@ public final class Test {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RetrofitArrayAPI service = retrofit.create(RetrofitArrayAPI.class);
+        ServerService service = retrofit.create(ServerService.class);
+        Call<List<Pic>> call = service.getPicList();
+
+
+        call.enqueue(new Callback<List<Pic>>(){
+
+            public void onResponse(Call<List<Pic>> c, Response<List<Pic>> response){
+
+                try {
+
+                    log.debug("Se inició la prueba");
+                    List<Pic> pics = response.body();
+
+                    for (int i = 0; i < pics.size(); i++) {
+
+                        log.debug("Pic {}",pics.get(i));
+
+                    }
+
+
+                } catch (Exception e) {
+
+                    Log.d("onResponse", "¡Error fatal!");
+                    e.printStackTrace();
+
+                }
+
+            }
+
+            public void onFailure(Call<List<Pic>> c, Throwable t) {
+
+                Log.d("onFailure", t.toString());
+
+            }
+
+        });
 
     }
 
