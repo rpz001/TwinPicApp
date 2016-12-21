@@ -14,10 +14,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Clase que relaciona 2 {@link Pic}.
- *
- * @author Diego P. Urrutia Astorga
- * @version 20161102
+ * Twin: Relaciona dos pics (Uno local con remoto)
+ * @author Rodrigo Alejandro Pizarro Zapata.
  */
 @Slf4j
 @AllArgsConstructor
@@ -32,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Twin extends BaseModel {
 
     /**
-     * Pic local
+     * Pic local.
      */
     @Getter
     @Setter
@@ -41,7 +39,7 @@ public class Twin extends BaseModel {
     Pic local;
 
     /**
-     * Pic desde el servidor
+     * Pic desde el servidor.
      */
     @Getter
     @Setter

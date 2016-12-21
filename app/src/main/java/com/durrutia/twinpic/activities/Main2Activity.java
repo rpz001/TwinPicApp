@@ -33,6 +33,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Main2Activity: Representa a la activity (ventana) que se obtiene al hacer click en algún Pic.
+ * @author Rodrigo Alejandro Pizarro Zapata.
+ */
 public class Main2Activity extends AppCompatActivity {
 
     Twin twin;
@@ -95,6 +99,10 @@ public class Main2Activity extends AppCompatActivity {
         }
 
     }
+
+    /**
+     *  Método que permite crear los botones calificadores (Like, Dislike, Warning).
+     */
     private void setButtons(){
 
         List<Twin> lt = SQLite.select().from(Twin.class).where(Twin_Table.remote_id.eq(getIntent().getExtras().getLong("id"))).queryList();
@@ -110,6 +118,7 @@ public class Main2Activity extends AppCompatActivity {
 
         Log.d("Twin",twin.toString());
 
+        //Evento cuando se da like.
         buttonLikes.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v){
@@ -154,6 +163,7 @@ public class Main2Activity extends AppCompatActivity {
 
         });
 
+        //Evento cuando se da dislike.
         buttonDislikes.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v){
@@ -198,6 +208,7 @@ public class Main2Activity extends AppCompatActivity {
 
         });
 
+        //Evento cuando se da Warning.
         buttonWarnings.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v){
@@ -237,7 +248,10 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
-    private void setRemote(){
+    /**
+     * Método que desactiva los botones en caso de que la Pic sea local.
+     */
+    private void setLocal(){
 
         buttonLikes.setVisibility(View.GONE);
         buttonDislikes.setVisibility(View.GONE);
@@ -245,6 +259,9 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
+    /**
+     * Método que despliega información de la Pic en la activity.
+     */
     private void picDescription(){
 
         Long picID = getIntent().getExtras().getLong("id");
@@ -263,7 +280,7 @@ public class Main2Activity extends AppCompatActivity {
         textViewDislikes.setText("No me gusta: " +picDislikes);
         textViewWarnings.setText("Advertencias: " +picWarnings);
 
-        if(getIntent().getExtras().getString("type").equals("local")) setRemote();
+        if(getIntent().getExtras().getString("type").equals("local")) setLocal();
 
     }
 

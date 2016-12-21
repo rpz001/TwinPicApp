@@ -25,6 +25,10 @@ import java.text.SimpleDateFormat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * CustomAdapter: Permite ingresar filas a un ListView.
+ * @author Rodrigo Alejandro Pizarro Zapata.
+ */
 public class CustomAdapter extends BaseAdapter {
 
     private Context context;
@@ -83,6 +87,11 @@ public class CustomAdapter extends BaseAdapter {
 
     }
 
+    /**
+     * Método que representa al click sobre una Pic local.
+     * @param position Posición de la lista.
+     * @return
+     */
     public OnClickListener getEvent1(final int position){
 
         OnClickListener evento = new OnClickListener(){
@@ -111,6 +120,11 @@ public class CustomAdapter extends BaseAdapter {
 
     }
 
+    /**
+     * Método que representa al click sobre una Pic remota.
+     * @param position Posición de la lista.
+     * @return
+     */
     public OnClickListener getEvent2(final int position){
 
         OnClickListener evento = new OnClickListener(){

@@ -15,10 +15,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Pic
- *
- * @author Diego P. Urrutia Astorga
- * @version 20161102
+ * Pic: Representa una foto
+ * @author Rodrigo Alejandro Pizarro Zapata.
  */
 @Slf4j
 @AllArgsConstructor
@@ -33,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Pic extends BaseModel {
 
     /**
-     * Identificador unico
+     * Identificador unico.
      */
     @Setter
     @Getter
@@ -41,7 +39,7 @@ public class Pic extends BaseModel {
     Long id;
 
     /**
-     * Identificador del dispositivo
+     * Identificador del dispositivo.
      */
     @Setter
     @Getter
@@ -49,7 +47,7 @@ public class Pic extends BaseModel {
     String deviceId;
 
     /**
-     * Fecha de la foto
+     * Fecha de la foto.
      */
     @Setter
     @Getter
@@ -57,12 +55,19 @@ public class Pic extends BaseModel {
     Date date;
 
     /**
-     * URL de la foto
+     * URL de la foto.
      */
     @Setter
     @Getter
     @Column
     String url;
+
+    /**
+     * Imagen de la Pic.
+     */
+    @Setter
+    @Getter
+    Byte[] imagen;
 
     /**
      * Latitud
